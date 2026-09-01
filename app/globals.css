@@ -1,26 +1,50 @@
+/* External imports MUST be the very first lines in the file */
+@import url('https://fonts.cdnfonts.com/css/google-sans');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Core Brand Colors */
+  --color-genx-primary: #5e2396;
+  --color-genx-dark: #220749; /* Used for high-contrast text and footers */
+  --color-genx-accent: #c7a6f3;
+  
+  /* Light Theme Specifics */
+  --color-genx-bg: #ffffff; 
+  --color-genx-surface: rgba(255, 255, 255, 0.7); /* For glassmorphism cards */
+  --color-genx-soft: #f4effc; /* Extremely pale purple for gradients */
+  
+  /* Typography */
+  --font-heading: "Times New Roman", serif;
+  --font-body: "Product Sans", "Google Sans", sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Animations */
+  --animate-marquee: marquee 30s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    /* Premium soft gradient background */
+    background: linear-gradient(135deg, #ffffff 0%, var(--color-genx-soft) 100%);
+    background-attachment: fixed; /* Prevents gradient banding on scroll */
+    color: var(--color-genx-dark); /* Deep purple for ultimate readability */
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased; /* Crisper font rendering on macOS/iOS */
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-genx-dark);
+    font-weight: 700; /* Strictly Bold as requested */
+    letter-spacing: -0.02em; /* Slight negative tracking for a tighter, premium look */
+  }
+
+  /* Utility class for luxury glassmorphism cards */
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white shadow-[0_8px_30px_rgba(34,7,73,0.04)];
+  }
 }
