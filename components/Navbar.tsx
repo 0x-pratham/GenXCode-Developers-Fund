@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
-import Button from '@/components/ui/Button';
 import MobileMenu from './MobileMenu';
 
 export default async function Navbar() {
@@ -36,8 +35,8 @@ export default async function Navbar() {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation (Hidden on Mobile) */}
-        <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center p-1.5 bg-gray-100/50 backdrop-blur-2xl border border-gray-200/60 shadow-[inset_0_2px_8px_rgba(0,0,0,0.03),0_2px_15px_rgba(255,255,255,0.5)] rounded-full">
+        {/* Center: Desktop Navigation (Hidden on Mobile) - Added z-[120] here */}
+        <div className="absolute left-1/2 -translate-x-1/2 z-[120] hidden lg:flex items-center p-1.5 bg-gray-100/50 backdrop-blur-2xl border border-gray-200/60 shadow-[inset_0_2px_8px_rgba(0,0,0,0.03),0_2px_15px_rgba(255,255,255,0.5)] rounded-full">
           <Link href="/about" className="px-6 py-2.5 rounded-full text-sm font-bold text-gray-500 hover:text-genx-dark hover:bg-white hover:shadow-[0_2px_12px_rgba(34,7,73,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] active:scale-95 transition-all duration-300 ease-out">
             About
           </Link>
@@ -55,14 +54,20 @@ export default async function Navbar() {
         <div className="flex-1 hidden lg:flex justify-end relative z-[110]">
           {user ? (
             <form action={handleLogout}>
-              <Button type="submit" variant="light" className="text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
+              <button 
+                type="submit" 
+                className="px-7 py-2.5 rounded-full text-sm font-bold bg-white/60 border border-gray-200/60 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] active:scale-95 transition-all"
+              >
                 Logout
-              </Button>
+              </button>
             </form>
           ) : (
-            <Button href="/login" variant="light" className="shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
+            <Link 
+              href="/login" 
+              className="px-7 py-2.5 rounded-full text-sm font-bold bg-white/60 border border-gray-200/60 text-genx-dark hover:bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_2px_10px_rgba(34,7,73,0.04)] active:scale-95 transition-all"
+            >
               Login / Register
-            </Button>
+            </Link>
           )}
         </div>
 
