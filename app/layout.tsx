@@ -4,7 +4,6 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Analytics } from '@vercel/analytics/react';
 
-
 // Initialize the Outfit font with 'swap' for zero-latency text rendering
 const outfit = Outfit({ 
   subsets: ['latin'], 
@@ -22,6 +21,9 @@ export const metadata = {
     apple: '/icon.svg',
   },
   themeColor: '#ffffff', // Adapts mobile browser headers to your brand
+  verification: {
+    google: '5HPVjTw91SH8m_9XqRz-i7VAIiJrKCDsxU72zgbWGFA',
+  },
 };
 
 export default function RootLayout({
