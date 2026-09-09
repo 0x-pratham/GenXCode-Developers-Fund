@@ -3,15 +3,23 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-// Initialize the Outfit font
+// Initialize the Outfit font with 'swap' for zero-latency text rendering
 const outfit = Outfit({ 
   subsets: ['latin'], 
-  variable: '--font-outfit' // This maps to your Tailwind config
+  variable: '--font-outfit',
+  display: 'swap',
 });
 
+// Premium Metadata Configuration replacing the default Next.js icons
 export const metadata = {
   title: 'GenXCode Developers Fund',
   description: 'Support students to participate in Hackathons and help build GenXCode.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
+  themeColor: '#ffffff', // Adapts mobile browser headers to your brand
 };
 
 export default function RootLayout({
@@ -20,13 +28,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    // Apply the font variable to the root HTML tag
-    <html lang="en" className={`${outfit.variable}`}>
-      {/* Added 'antialiased' for premium font rendering */}
-      <body className="flex flex-col min-h-screen bg-genx-bg text-white antialiased">
+    // Added 'scroll-smooth' for hardware-accelerated, lag-free anchor navigation
+    <html lang="en" className={`${outfit.variable} scroll-smooth`}>
+      {/* 
+        - antialiased: Crisp font rendering
+        - selection: Custom highlight color matching your brand instead of default blue
+        - overflow-x-hidden: Prevents horizontal scrolling/wobble on mobile devices
+      */}
+      <body className="flex flex-col min-h-screen bg-genx-bg text-white antialiased selection:bg-genx-primary/30 selection:text-genx-dark overflow-x-hidden">
         <Navbar />
         
-        <main className="flex-grow">
+        <main className="flex-grow flex flex-col relative">
           {children}
         </main>
         
