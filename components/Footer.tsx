@@ -54,7 +54,7 @@ export default function Footer() {
             {/* Engineered Social Pills */}
             <div className="flex items-center gap-3 mb-8">
               {/* Instagram */}
-              <Link href="#" className="w-10 h-10 rounded-full bg-white/60 border border-gray-200/60 flex items-center justify-center text-gray-500 hover:text-[#E1306C] hover:bg-white hover:border-[#E1306C]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+              <Link href="https://www.instagram.com/genxcode.in?stkn=NWZ2NXloMndkdzhu" className="w-10 h-10 rounded-full bg-white/60 border border-gray-200/60 flex items-center justify-center text-gray-500 hover:text-[#E1306C] hover:bg-white hover:border-[#E1306C]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -63,7 +63,7 @@ export default function Footer() {
               </Link>
               
               {/* LinkedIn */}
-              <Link href="#" className="w-10 h-10 rounded-full bg-white/60 border border-gray-200/60 flex items-center justify-center text-gray-500 hover:text-[#0A66C2] hover:bg-white hover:border-[#0A66C2]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+              <Link href="https://www.linkedin.com/company/genxcode-club/" className="w-10 h-10 rounded-full bg-white/60 border border-gray-200/60 flex items-center justify-center text-gray-500 hover:text-[#0A66C2] hover:bg-white hover:border-[#0A66C2]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                   <rect x="2" y="9" width="4" height="12"></rect>
@@ -72,7 +72,7 @@ export default function Footer() {
               </Link>
 
               {/* WhatsApp */}
-              <Link href="#" className="w-10 h-10 rounded-full bg-white/60 border border-gray-200/60 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:bg-white hover:border-[#25D366]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+              <Link href="https://whatsapp.com/channel/0029VbDWVfRIN9ien14MPB1t" className="w-10 h-10 rounded-full bg-white/60 border border-gray-200/60 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:bg-white hover:border-[#25D366]/30 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9"></path>
                   <path d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1"></path>
@@ -102,8 +102,8 @@ export default function Footer() {
             <Link href="https://genxcode.cosmolix.co.in" target="_blank" className="hover:text-genx-dark transition-colors">GenXCode</Link>. All rights reserved.
           </p>
           <div className="flex gap-6 text-xs text-gray-400 font-body font-medium">
-            <Link href="#" className="hover:text-genx-dark transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-genx-dark transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-genx-dark transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-genx-dark transition-colors">Terms of Service</Link>
           </div>
         </div>
 
