@@ -2,11 +2,24 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { ShieldAlert } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 
 export default async function Navbar() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  // 1. Verify Admin Status
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    
+    isAdmin = profile?.role === 'admin';
+  }
 
   const handleLogout = async () => {
     'use server';
@@ -35,7 +48,7 @@ export default async function Navbar() {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation (Hidden on Mobile) - Added z-[120] here */}
+        {/* Center: Desktop Navigation (Hidden on Mobile) */}
         <div className="absolute left-1/2 -translate-x-1/2 z-[120] hidden lg:flex items-center p-1.5 bg-gray-100/50 backdrop-blur-2xl border border-gray-200/60 shadow-[inset_0_2px_8px_rgba(0,0,0,0.03),0_2px_15px_rgba(255,255,255,0.5)] rounded-full">
           <Link href="/about" className="px-6 py-2.5 rounded-full text-sm font-bold text-gray-500 hover:text-genx-dark hover:bg-white hover:shadow-[0_2px_12px_rgba(34,7,73,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] active:scale-95 transition-all duration-300 ease-out">
             About
@@ -46,6 +59,17 @@ export default async function Navbar() {
           {user && (
             <Link href="/dashboard" className="px-6 py-2.5 rounded-full text-sm font-bold text-gray-500 hover:text-genx-dark hover:bg-white hover:shadow-[0_2px_12px_rgba(34,7,73,0.06),inset_0_1px_0_rgba(255,255,255,0.8)] active:scale-95 transition-all duration-300 ease-out">
               Dashboard
+            </Link>
+          )}
+          
+          {/* 2. Privileged Admin Route (Light Red Pill) */}
+          {isAdmin && (
+            <Link 
+              href="/admin" 
+              className="ml-1 px-5 py-2.5 rounded-full text-sm font-bold bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white hover:border-red-600 hover:shadow-[0_4px_15px_rgba(220,38,38,0.25)] active:scale-95 transition-all duration-300 ease-out flex items-center gap-1.5"
+            >
+              <ShieldAlert size={16} strokeWidth={2.5} />
+              Admin Panel
             </Link>
           )}
         </div>
@@ -72,7 +96,8 @@ export default async function Navbar() {
         </div>
 
         {/* Mobile Navigation Trigger (Visible ONLY on Mobile) */}
-        <MobileMenu user={user} handleLogout={handleLogout} />
+        {/* 3. Passing isAdmin to the client component */}
+        <MobileMenu user={user} isAdmin={isAdmin} handleLogout={handleLogout} />
 
       </div>
     </nav>

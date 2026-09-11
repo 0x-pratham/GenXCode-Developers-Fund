@@ -2,10 +2,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Link from 'next/link';
-import { Menu, X, ArrowRight, LogOut, ChevronRight } from 'lucide-react';
+import { Menu, X, ArrowRight, LogOut, ChevronRight, ShieldAlert } from 'lucide-react';
 
 interface MobileMenuProps {
   user: any;
+  isAdmin: boolean;
   handleLogout: () => void;
 }
 
@@ -32,7 +33,7 @@ const itemVariants: Variants = {
   open: { opacity: 1, x: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
 };
 
-export default function MobileMenu({ user, handleLogout }: MobileMenuProps) {
+export default function MobileMenu({ user, isAdmin, handleLogout }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   // Lock background scrolling when the menu is active
@@ -63,7 +64,6 @@ export default function MobileMenu({ user, handleLogout }: MobileMenuProps) {
             initial="closed"
             animate="open"
             exit="closed"
-            // FIX: Using w-screen, left-0, and explicit calc() height breaks it out of the Navbar's CSS trap
             className="fixed left-0 top-[5.5rem] w-screen h-[calc(100vh-5.5rem)] bg-white flex flex-col p-8 z-[100] border-t border-gray-100 overflow-hidden"
           >
             {/* Ambient Interior Glow */}
@@ -108,6 +108,23 @@ export default function MobileMenu({ user, handleLogout }: MobileMenuProps) {
                       Dashboard
                     </span>
                     <ChevronRight size={28} className="text-gray-300 group-active:text-genx-primary transition-colors" />
+                  </Link>
+                </motion.div>
+              )}
+
+              {/* Elevated Admin Route (Light Red Pill) */}
+              {isAdmin && (
+                <motion.div variants={itemVariants} className="pt-6">
+                  <Link 
+                    href="/admin" 
+                    onClick={() => setIsOpen(false)} 
+                    className="group flex items-center justify-between py-4 px-6 bg-red-50 border border-red-100 rounded-full active:bg-red-600 active:border-red-600 transition-all duration-300 shadow-sm"
+                  >
+                    <span className="text-2xl md:text-3xl font-heading font-bold text-red-600 group-active:text-white transition-colors tracking-tight flex items-center gap-3">
+                      <ShieldAlert size={28} strokeWidth={2.5} />
+                      Admin Panel
+                    </span>
+                    <ChevronRight size={28} className="text-red-400 group-active:text-white transition-colors" />
                   </Link>
                 </motion.div>
               )}
