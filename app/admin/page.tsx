@@ -3,12 +3,14 @@ import { redirect } from 'next/navigation'
 import { CheckCircle2, ShieldAlert } from 'lucide-react'
 import AdminCardClient from './AdminCardClient'
 
-export const revalidate = 0; // Prevent caching
+export const revalidate = 0
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   if (!user) redirect('/login')
 
   const { data: profile } = await supabase
@@ -19,21 +21,28 @@ export default async function AdminDashboard() {
 
   if (profile?.role !== 'admin') {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center p-6 relative">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-red-500/10 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
-        <div className="bg-white/80 backdrop-blur-xl border border-white p-12 rounded-[2rem] shadow-[0_20px_60px_rgba(34,7,73,0.08)] text-center max-w-lg w-full">
-          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShieldAlert size={40} strokeWidth={1.5} />
+      <div className="min-h-[80vh] flex items-center justify-center px-6 relative w-full">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-500/10 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+
+        <div className="bg-white border border-gray-100 p-10 rounded-2xl shadow-xl text-center max-w-lg w-full">
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShieldAlert size={32} strokeWidth={2} />
           </div>
-          <h1 className="text-3xl font-heading font-bold text-genx-dark tracking-tight mb-3">Access Denied</h1>
-          <p className="text-gray-500 font-body font-medium">This secure area is restricted to GenXCode administrators only.</p>
+
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">
+            Access Denied
+          </h1>
+
+          <p className="text-gray-500 font-medium">
+            This secure sector is restricted to GenXCode administrators.
+          </p>
         </div>
       </div>
     )
   }
 
-  // FIX: Added message and user_id to the query
-  const { data: pendingDonations } = await supabase
+  // Fetch all pending donations with complete profile information
+  const { data: pendingDonations, error } = await supabase
     .from('donations')
     .select(`
       id,
@@ -41,61 +50,108 @@ export default async function AdminDashboard() {
       amount,
       message,
       screenshot_url,
+      status,
       created_at,
-      profiles ( name )
+      profiles (
+        id,
+        name,
+        avatar_url,
+        github_url,
+        portfolio_url,
+        bio,
+        is_banned
+      )
     `)
     .eq('status', 'pending')
     .order('created_at', { ascending: true })
 
-  // Calculate Metrics
-  const totalPendingAmount = pendingDonations?.reduce((sum, d) => sum + Number(d.amount), 0) || 0;
+  if (error) {
+    console.error('Admin Fetch Error:', error.message)
+  }
+
+  const totalPendingAmount =
+    pendingDonations?.reduce(
+      (sum, donation) => sum + Number(donation.amount),
+      0
+    ) || 0
 
   return (
-    <div className="max-w-7xl mx-auto p-6 py-16 relative z-10 min-h-[85vh]">
-      
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[150px] -z-10 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-1/4 w-[800px] h-[800px] bg-genx-primary/10 rounded-full blur-[150px] -z-10 pointer-events-none"></div>
+    <div className="w-full max-w-7xl mx-auto px-6 py-12 relative z-10 min-h-[85vh]">
+      {/* Background glow effects */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
-      <div className="mb-12">
-        <h1 className="text-4xl md:text-5xl font-heading font-bold text-genx-dark tracking-tight mb-3 text-center md:text-left">
+      <div className="mb-10 border-b border-gray-200 pb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-2">
           Admin Control Panel
         </h1>
-        
-        {/* Executive Analytics Row */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-white/80 backdrop-blur-md border border-gray-100 p-6 rounded-[1.5rem] shadow-sm flex items-center justify-between">
+
+        <p className="text-gray-500 font-medium">
+          Verify and moderate incoming GenXCode Fund contributions.
+        </p>
+
+        {/* Executive Analytics */}
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+          <div className="bg-white border border-gray-200 p-5 rounded-xl shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Queue Volume</p>
-              <p className="text-3xl font-bold text-genx-dark tracking-tight">{pendingDonations?.length || 0} <span className="text-lg text-gray-400 font-medium">pending</span></p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                Queue Volume
+              </p>
+
+              <p className="text-2xl font-bold text-gray-900">
+                {pendingDonations?.length || 0}{' '}
+                <span className="text-sm text-gray-400 font-medium">
+                  pending
+                </span>
+              </p>
             </div>
-            <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-500">
-              <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span></span>
+
+            <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center text-amber-500 border border-amber-100">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-full w-full bg-amber-500"></span>
+              </span>
             </div>
           </div>
-          <div className="bg-white/80 backdrop-blur-md border border-gray-100 p-6 rounded-[1.5rem] shadow-sm flex items-center justify-between">
+
+          <div className="bg-white border border-gray-200 p-5 rounded-xl shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Pending Capital</p>
-              <p className="text-3xl font-bold text-emerald-600 tracking-tight">₹{totalPendingAmount.toLocaleString()}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                Pending Capital
+              </p>
+
+              <p className="text-2xl font-bold text-emerald-600">
+                ₹{totalPendingAmount.toLocaleString()}
+              </p>
             </div>
-            <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 font-bold text-xl">₹</div>
+
+            <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 font-bold border border-emerald-100">
+              ₹
+            </div>
           </div>
         </div>
       </div>
-      
+
       {(!pendingDonations || pendingDonations.length === 0) ? (
-        <div className="text-center p-20 bg-white/80 backdrop-blur-xl border border-white shadow-[0_12px_40px_rgba(34,7,73,0.04)] rounded-[2rem] flex flex-col items-center">
-          <div className="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 size={48} strokeWidth={1.5} />
+        <div className="text-center p-16 bg-white border border-gray-200 shadow-sm rounded-2xl flex flex-col items-center">
+          <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-4">
+            <CheckCircle2 size={32} strokeWidth={2} />
           </div>
-          <h2 className="text-3xl font-heading font-bold text-genx-dark mb-3 tracking-tight">Queue Cleared!</h2>
-          <p className="text-gray-500 font-medium font-body text-lg max-w-md">
-            All donations have been processed. Great work keeping the fund secure.
+
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Queue Cleared
+          </h2>
+
+          <p className="text-gray-500">
+            All pending donations have been successfully processed.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-1000">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {pendingDonations.map((donation) => (
-            <AdminCardClient key={donation.id} donation={donation} />
+            <AdminCardClient
+              key={donation.id}
+              donation={donation}
+            />
           ))}
         </div>
       )}
