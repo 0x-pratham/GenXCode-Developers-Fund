@@ -72,8 +72,8 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
     <>
 
       {showResultPopup && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-genx-dark/60 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="proof-result-title">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-genx-dark/60 p-3 backdrop-blur-sm sm:p-4" role="dialog" aria-modal="true" aria-labelledby="proof-result-title">
+          <div className="my-auto max-h-[calc(100dvh-1.5rem)] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-5 text-center shadow-2xl animate-in fade-in zoom-in duration-200 sm:max-h-[calc(100dvh-2rem)] sm:p-8">
             <div className={"mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full " + (submissionState.status === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600')}>
               {submissionState.status === 'success' ? <CheckCircle2 size={34} /> : <AlertCircle size={34} />}
             </div>
@@ -89,17 +89,17 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
           </div>
         </div>
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 mb-16">
+      <div className="mb-12 grid min-w-0 grid-cols-1 gap-6 sm:mb-16 sm:gap-8 lg:grid-cols-12 lg:gap-12">
         
         {/* Left Column: Dynamic QR Session (5 columns) */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-5 sm:gap-6 lg:col-span-5">
           <div>
-            <h2 className="text-3xl font-heading font-bold text-genx-dark tracking-tight">Active Payment Gateway</h2>
+            <h2 className="text-2xl font-heading font-bold tracking-tight text-genx-dark sm:text-3xl">Active Payment Gateway</h2>
             <p className="text-gray-500 font-medium mt-2">Scan the secure QR code below. This payment session automatically rotates every 5 minutes.</p>
           </div>
 
           {/* Luxurious Active Session Card */}
-          <div className="bg-white/80 backdrop-blur-xl border border-white rounded-[2.5rem] p-6 shadow-[0_20px_60px_rgba(34,7,73,0.06)] flex flex-col items-center relative overflow-hidden group">
+          <div className="relative flex min-w-0 flex-col items-center overflow-hidden rounded-[2rem] border border-white bg-white/80 p-4 shadow-[0_20px_60px_rgba(34,7,73,0.06)] backdrop-blur-xl sm:rounded-[2.5rem] sm:p-6">
             
             {/* Session Timer Header */}
             <div className="w-full flex justify-between items-center mb-6 px-2">
@@ -117,7 +117,7 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
             </div>
 
             {/* Dynamic QR Display with smooth fade transition */}
-            <div className="w-full max-w-[260px] aspect-square relative rounded-3xl overflow-hidden mb-6 border border-gray-100 bg-white flex items-center justify-center p-3 shadow-sm transition-opacity duration-500">
+            <div className="relative mb-5 aspect-square w-full max-w-[min(100%,260px)] overflow-hidden rounded-3xl border border-gray-100 bg-white p-3 shadow-sm transition-opacity duration-500 sm:mb-6">
               <Image 
                 key={currentTarget.name} // Forces a re-render/animation on swap
                 src={currentTarget.image} 
@@ -153,7 +153,7 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
           </div>
 
           {/* Engineered Warning Pill */}
-          <div className="bg-red-50/90 backdrop-blur-md border border-red-100 p-5 rounded-[1.5rem] flex items-start gap-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
+          <div className="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50/90 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] backdrop-blur-md sm:gap-4 sm:rounded-[1.5rem] sm:p-5">
             <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={22} />
             <p className="text-sm text-red-700 leading-relaxed">
               <span className="font-bold block mb-0.5">Final Contribution Policy</span>
@@ -163,18 +163,18 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
         </div>
 
         {/* Right Column: Upload Form (7 columns) */}
-        <div className="lg:col-span-7 p-8 md:p-10 bg-white/80 backdrop-blur-xl border border-white rounded-[2.5rem] shadow-[0_20px_60px_rgba(34,7,73,0.06)] flex flex-col h-full">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="flex h-auto min-w-0 flex-col rounded-[2rem] border border-white bg-white/80 p-4 shadow-[0_20px_60px_rgba(34,7,73,0.06)] backdrop-blur-xl sm:rounded-[2.5rem] sm:p-8 md:p-10 lg:col-span-7 lg:h-full">
+          <div className="mb-6 flex items-center gap-3 sm:mb-8">
             <div className="w-12 h-12 rounded-full bg-genx-primary/10 flex items-center justify-center text-genx-primary shadow-inner">
               <UploadCloud size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-heading font-bold text-genx-dark tracking-tight">Submit Payment Proof</h2>
+              <h2 className="text-xl font-heading font-bold tracking-tight text-genx-dark sm:text-2xl">Submit Payment Proof</h2>
               <p className="text-sm font-medium text-gray-500">Upload your screenshot to claim your legacy tier.</p>
             </div>
           </div>
 
-          <form action={formAction} className="flex flex-col gap-6 flex-grow">
+          <form action={formAction} className="flex min-w-0 flex-grow flex-col gap-5 sm:gap-6">
             <div>
               <label className="block text-gray-600 font-bold text-xs uppercase tracking-wider mb-2 ml-1">
                 Amount Donated (₹)
@@ -224,7 +224,7 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
                 />
               </div>
               {selectedFile && (
-                <div className="mt-3 flex flex-col gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 sm:flex-row sm:items-center">
+                <div className="mt-3 flex min-w-0 flex-col gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
                   <div className="flex min-w-0 flex-1 items-center gap-3">
                     <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${isPdf(selectedFile) ? 'bg-red-100 text-red-600' : 'bg-genx-primary/10 text-genx-primary'}`}>
                       {isPdf(selectedFile) ? <FileText size={24} /> : <FileImage size={24} />}
@@ -235,7 +235,7 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
                       <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-700"><CheckCircle2 size={13} /> File selected successfully</p>
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-3">
+                  <div className="flex w-full shrink-0 items-center justify-between border-t border-emerald-100 pt-3 sm:w-auto sm:justify-start sm:border-0 sm:pt-0">
                     <a href={localPreviewUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-bold text-genx-primary hover:text-genx-dark"><Eye size={16} /> View</a>
                     <span className="h-5 w-px bg-gray-200" />
                     <button type="button" onClick={() => fileInputRef.current?.click()} className="inline-flex items-center gap-1.5 text-sm font-bold text-genx-primary hover:text-genx-dark"><RefreshCw size={15} /> Replace</button>
@@ -244,8 +244,8 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
               )}
             </div>
 
-            <div className="mt-auto pt-4">
-              <button type="submit" disabled={isSubmitting} className="w-full px-6 py-4 bg-genx-dark text-white hover:bg-genx-primary disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-500 rounded-xl font-bold shadow-[0_10px_30px_rgba(34,7,73,0.15)] hover:shadow-[0_15px_40px_rgba(94,35,150,0.25)] active:scale-[0.98] flex justify-center items-center gap-2">
+            <div className="pt-2 sm:mt-auto sm:pt-4">
+              <button type="submit" disabled={isSubmitting} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-genx-dark px-4 py-3.5 font-bold text-white shadow-[0_10px_30px_rgba(34,7,73,0.15)] transition-all duration-300 hover:bg-genx-primary hover:shadow-[0_15px_40px_rgba(94,35,150,0.25)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:px-6 sm:py-4">
                 {isSubmitting ? 'Uploading Proof...' : 'Verify Contribution'} <CheckCircle2 size={18} />
               </button>
             </div>
@@ -254,13 +254,13 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
       </div>
 
       {/* --- Upgraded Contribution History UI --- */}
-      <h2 className="text-3xl font-heading font-bold text-genx-dark mb-6 tracking-tight flex items-center gap-3">
+      <h2 className="mb-5 flex flex-wrap items-center gap-2 text-2xl font-heading font-bold tracking-tight text-genx-dark sm:mb-6 sm:gap-3 sm:text-3xl">
         Contribution Ledger
         <span className="bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 rounded-full">{donations?.length || 0} Records</span>
       </h2>
       
-      <div className="bg-white border border-gray-100 rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.02)] overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.02)] sm:rounded-[2rem]">
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left border-collapse">
             <thead className="bg-gray-50/80 border-b border-gray-100">
               <tr>
@@ -331,6 +331,40 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="grid gap-3 md:hidden">
+        {donations?.map((donation) => (
+          <article key={donation.id} className="min-w-0 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-gray-500">{new Date(donation.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                <p className="mt-1 text-xl font-bold text-genx-dark">₹{donation.amount.toLocaleString()}</p>
+              </div>
+              <span className={`inline-flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide ${
+                donation.status === 'approved' ? 'border-emerald-100 bg-emerald-50 text-emerald-600' :
+                donation.status === 'rejected' ? 'border-red-100 bg-red-50 text-red-500' :
+                'border-amber-100 bg-amber-50 text-amber-600'
+              }`}>
+                {donation.status === 'approved' && <CheckCircle2 size={12} />}
+                {donation.status === 'pending' && <Clock size={12} />}
+                {donation.status === 'rejected' && <XCircle size={12} />}
+                {donation.status}
+              </span>
+            </div>
+            <a href={donation.screenshot_url} target="_blank" rel="noreferrer" className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-genx-primary">
+              <FileImage size={14} /> View Receipt
+            </a>
+            {donation.message && <p className="mt-3 break-words rounded-xl bg-gray-50 p-3 text-sm italic leading-relaxed text-gray-600">“{donation.message}”</p>}
+          </article>
+        ))}
+        {(!donations || donations.length === 0) && (
+          <div className="rounded-2xl border border-gray-100 bg-white px-5 py-10 text-center">
+            <FileImage size={26} className="mx-auto mb-3 text-gray-300" />
+            <h3 className="font-heading text-lg font-bold text-genx-dark">No Records Found</h3>
+            <p className="mt-1 text-sm text-gray-500">Your legacy begins with your first contribution.</p>
+          </div>
+        )}
       </div>
     </>
   );
