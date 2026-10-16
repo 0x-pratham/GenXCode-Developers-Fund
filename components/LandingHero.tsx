@@ -79,7 +79,7 @@ export default function LandingHero() {
           <Button href="/hall-of-fame" variant="light" className="w-full sm:w-auto px-8 py-4 lg:py-3.5 shadow-sm hover:shadow-md transition-shadow">
             View Hall of Fame
           </Button>
-          <Button href="/login" variant="dark" className="w-full sm:w-auto px-10 py-4 lg:py-3.5 text-base shadow-[0_8px_20px_rgba(34,7,73,0.15)] hover:shadow-[0_12px_25px_rgba(34,7,73,0.25)] transition-shadow">
+          <Button href="/dashboard" variant="dark" className="w-full sm:w-auto px-10 py-4 lg:py-3.5 text-base shadow-[0_8px_20px_rgba(34,7,73,0.15)] hover:shadow-[0_12px_25px_rgba(34,7,73,0.25)] transition-shadow">
             Sponsor a Developer
           </Button>
         </motion.div>
