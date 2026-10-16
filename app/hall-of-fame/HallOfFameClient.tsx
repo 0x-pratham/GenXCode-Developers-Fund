@@ -42,7 +42,7 @@ export default function HallOfFameClient({
       initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="w-full rounded-[1.5rem] border border-white bg-white/70 p-5 sm:p-6 shadow-[0_8px_30px_rgba(34,7,73,0.04)] backdrop-blur-xl"
+      className="mb-4 w-full rounded-[1.5rem] border border-white bg-white/70 p-5 sm:p-6 shadow-[0_8px_30px_rgba(34,7,73,0.04)] backdrop-blur-xl"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-genx-primary/10 bg-genx-primary/5 text-genx-primary">
@@ -66,7 +66,7 @@ export default function HallOfFameClient({
     return (
       <>
         {totalContributionsCard}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center p-16 bg-white/70 backdrop-blur-xl border border-white shadow-[0_12px_40px_rgba(34,7,73,0.06)] rounded-[2rem]">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center p-16 bg-white/70 backdrop-blur-xl border border-white shadow-[0_12px_40px_rgba(34,7,73,0.06)] rounded-[2rem]">
         <h2 className="text-3xl font-heading font-bold text-genx-dark mb-3 tracking-tight">
           The Hall is currently empty.
         </h2>
@@ -81,6 +81,14 @@ export default function HallOfFameClient({
   return (
     <>
       {totalContributionsCard}
+      <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <h2 className="font-heading text-2xl font-bold tracking-tight text-genx-dark">
+          Our Contributors
+        </h2>
+        <p className="font-body text-sm font-medium text-gray-500">
+          Ranked by total impact
+        </p>
+      </div>
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
       {donors.map((donor, index) => {
         const globalRank = index + 1;
