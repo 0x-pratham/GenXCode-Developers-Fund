@@ -10,19 +10,27 @@ export async function login(formData: FormData) {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
+  const requestedNext = formData.get('next')
+  const next = typeof requestedNext === 'string' && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'
 
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/login?error=Could not authenticate user')
+    redirect(`/login?error=Could%20not%20authenticate%20user&next=${encodeURIComponent(next)}`)
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect(next)
 }
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
+  const requestedNext = formData.get('next')
+  const next = typeof requestedNext === 'string' && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
@@ -36,9 +44,9 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/login?error=Could not create user')
+    redirect(`/login?error=Could%20not%20create%20user&next=${encodeURIComponent(next)}`)
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect(next)
 }

@@ -12,7 +12,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
-  if (!user) redirect('/login')
+  if (!user) redirect('/login?next=%2Fdashboard')
 
   // Fetch Donations
   const { data: donations } = await supabase

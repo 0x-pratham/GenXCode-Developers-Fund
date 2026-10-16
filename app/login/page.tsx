@@ -11,13 +11,20 @@ function AuthContent() {
   const error = searchParams.get('error');
   const [isLogin, setIsLogin] = useState(true);
 
-  // Client-side OAuth Handler
+  // Preserve the originally requested destination across OAuth sign-in.
+  const requestedNext = searchParams.get('next');
+  const next = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard';
+
   const handleOAuth = async (provider: 'google' | 'github') => {
     const supabase = createClient();
+    const callbackUrl = new URL('/auth/callback', window.location.origin);
+    callbackUrl.searchParams.set('next', next);
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl.toString(),
       },
     });
   };
@@ -104,6 +111,7 @@ function AuthContent() {
         </div>
 
         <form className="flex flex-col gap-5 relative z-10">
+          <input type="hidden" name="next" value={next} />
           <AnimatePresence mode="popLayout">
             {!isLogin && (
               <motion.div
