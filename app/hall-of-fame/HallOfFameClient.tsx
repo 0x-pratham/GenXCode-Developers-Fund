@@ -1,6 +1,6 @@
 'use client';
 import { motion, Variants } from 'framer-motion';
-import { User, Globe, Trophy, Medal, Award, ArrowUpRight } from 'lucide-react';
+import { User, Globe, Trophy, Medal, Award, ArrowUpRight, HeartHandshake } from 'lucide-react';
 
 interface Donor {
   donor_name: string;
@@ -17,7 +17,13 @@ const getTier = (amount: number) => {
   return { name: 'Bronze Patron', color: 'text-amber-700 bg-amber-50 border-amber-200' };
 };
 
-export default function HallOfFameClient({ donors }: { donors: Donor[] }) {
+export default function HallOfFameClient({
+  donors,
+  totalContributions,
+}: {
+  donors: Donor[];
+  totalContributions: number | null;
+}) {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -31,9 +37,36 @@ export default function HallOfFameClient({ donors }: { donors: Donor[] }) {
     visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.5, ease: 'easeOut' } }
   };
 
+  const totalContributionsCard = (
+    <motion.div
+      initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="mb-4 w-full rounded-[1.5rem] border border-white bg-white/70 p-5 sm:p-6 shadow-[0_8px_30px_rgba(34,7,73,0.04)] backdrop-blur-xl"
+    >
+      <div className="flex items-center gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-genx-primary/10 bg-genx-primary/5 text-genx-primary">
+          <HeartHandshake size={21} strokeWidth={1.8} />
+        </div>
+        <div className="min-w-0">
+          <p className="font-body text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400">
+            Total Community Contributions
+          </p>
+          <p className="mt-1 font-heading text-3xl sm:text-4xl font-bold tracking-tight text-genx-primary">
+            {totalContributions === null
+              ? 'Temporarily unavailable'
+              : `₹${totalContributions.toLocaleString('en-IN')}`}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+
   if (donors.length === 0) {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center p-16 bg-white/70 backdrop-blur-xl border border-white shadow-[0_12px_40px_rgba(34,7,73,0.06)] rounded-[2rem]">
+      <>
+        {totalContributionsCard}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center p-16 bg-white/70 backdrop-blur-xl border border-white shadow-[0_12px_40px_rgba(34,7,73,0.06)] rounded-[2rem]">
         <h2 className="text-3xl font-heading font-bold text-genx-dark mb-3 tracking-tight">
           The Hall is currently empty.
         </h2>
@@ -41,11 +74,22 @@ export default function HallOfFameClient({ donors }: { donors: Donor[] }) {
           Be the first to claim the #1 spot and etch your name into GenXCode history!
         </p>
       </motion.div>
+      </>
     );
   }
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
+    <>
+      {totalContributionsCard}
+      <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <h2 className="font-heading text-2xl font-bold tracking-tight text-genx-dark">
+          Our Contributors
+        </h2>
+        <p className="font-body text-sm font-medium text-gray-500">
+          Ranked by total impact
+        </p>
+      </div>
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
       {donors.map((donor, index) => {
         const globalRank = index + 1;
         const tier = getTier(donor.total_amount);
@@ -136,6 +180,7 @@ export default function HallOfFameClient({ donors }: { donors: Donor[] }) {
           </motion.div>
         );
       })}
-    </motion.div>
+      </motion.div>
+    </>
   );
 }

@@ -6,8 +6,19 @@ export const revalidate = 0; // Ensures the page fetches fresh data
 export default async function HallOfFame() {
   const supabase = await createClient();
   
-  // Call the newly upgraded secure Postgres function
+  // Fetch the leaderboard and the platform-wide approved contribution total.
   const { data: donors } = await supabase.rpc('get_hall_of_fame');
+  const { data: approvedDonations, error: contributionsError } = await supabase
+    .from('donations')
+    .select('amount')
+    .eq('status', 'approved');
+
+  const totalContributions = contributionsError
+    ? null
+    : (approvedDonations ?? []).reduce(
+        (total, donation) => total + Number(donation.amount ?? 0),
+        0
+      );
 
   return (
     <div className="max-w-5xl mx-auto py-24 px-6 min-h-[85vh] relative z-10">
@@ -15,7 +26,7 @@ export default async function HallOfFame() {
       {/* Luxury soft background glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-genx-accent/15 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
-      <div className="text-center mb-16">
+      <div className="text-center mb-10 sm:mb-12">
         <h1 className="text-5xl md:text-6xl font-heading font-bold text-genx-dark mb-5 tracking-tight">
           GenXCode Hall of Fame
         </h1>
@@ -25,7 +36,7 @@ export default async function HallOfFame() {
       </div>
       
       {/* Pass the enriched data to the interactive client component */}
-      <HallOfFameClient donors={donors || []} />
+      <HallOfFameClient donors={donors || []} totalContributions={totalContributions} />
       
     </div>
   );
