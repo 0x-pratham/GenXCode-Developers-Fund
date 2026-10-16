@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useActionState } from 'react';
 import Image from 'next/image';
 import { submitDonation } from '@/app/dashboard/actions';
 import { UploadCloud, CheckCircle2, Clock, XCircle, FileImage, MessageSquareQuote, AlertCircle, QrCode, Timer, Copy } from 'lucide-react';
@@ -15,6 +15,12 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
   const [activeQR, setActiveQR] = useState(0);
   const [timeLeft, setTimeLeft] = useState(SESSION_DURATION);
   const [copied, setCopied] = useState(false);
+  const [submissionState, formAction, isSubmitting] = useActionState(submitDonation, { status: 'idle' as 'idle' | 'success' | 'error', message: '' });
+  const [showResultPopup, setShowResultPopup] = useState(false);
+
+  useEffect(() => {
+    if (submissionState.status !== 'idle') setShowResultPopup(true);
+  }, [submissionState]);
 
   // 5-Minute Session Timer Logic
   useEffect(() => {
@@ -48,6 +54,23 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
 
   return (
     <>
+
+      {showResultPopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-genx-dark/60 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="proof-result-title">
+          <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div className={"mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full " + (submissionState.status === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600')}>
+              {submissionState.status === 'success' ? <CheckCircle2 size={34} /> : <AlertCircle size={34} />}
+            </div>
+            <h2 id="proof-result-title" className="mb-3 text-2xl font-heading font-bold text-genx-dark">
+              {submissionState.status === 'success' ? 'Payment Proof Uploaded!' : 'Upload Unsuccessful'}
+            </h2>
+            <p className="mb-7 text-sm leading-relaxed text-gray-600">{submissionState.message}</p>
+            <button type="button" onClick={() => setShowResultPopup(false)} className="w-full rounded-xl bg-genx-dark px-6 py-3.5 font-bold text-white transition-colors hover:bg-genx-primary">
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 mb-16">
         
         {/* Left Column: Dynamic QR Session (5 columns) */}
@@ -133,7 +156,7 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
             </div>
           </div>
 
-          <form action={submitDonation} className="flex flex-col gap-6 flex-grow">
+          <form action={formAction} className="flex flex-col gap-6 flex-grow">
             <div>
               <label className="block text-gray-600 font-bold text-xs uppercase tracking-wider mb-2 ml-1">
                 Amount Donated (₹)
@@ -183,8 +206,8 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
             </div>
 
             <div className="mt-auto pt-4">
-              <button type="submit" className="w-full px-6 py-4 bg-genx-dark text-white hover:bg-genx-primary transition-all duration-500 rounded-xl font-bold shadow-[0_10px_30px_rgba(34,7,73,0.15)] hover:shadow-[0_15px_40px_rgba(94,35,150,0.25)] active:scale-[0.98] flex justify-center items-center gap-2">
-                Verify Contribution <CheckCircle2 size={18} />
+              <button type="submit" disabled={isSubmitting} className="w-full px-6 py-4 bg-genx-dark text-white hover:bg-genx-primary disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-500 rounded-xl font-bold shadow-[0_10px_30px_rgba(34,7,73,0.15)] hover:shadow-[0_15px_40px_rgba(94,35,150,0.25)] active:scale-[0.98] flex justify-center items-center gap-2">
+                {isSubmitting ? 'Uploading Proof...' : 'Verify Contribution'} <CheckCircle2 size={18} />
               </button>
             </div>
           </form>
