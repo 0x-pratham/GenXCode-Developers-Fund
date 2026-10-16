@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache'
 type DonationSubmissionState = {
   status: 'idle' | 'success' | 'error'
   message: string
+  fileName?: string
+  proofUrl?: string
 }
 
 export async function submitDonation(
@@ -37,8 +39,10 @@ export async function submitDonation(
     if (file.size > MAX_FILE_SIZE) {
       return { status: 'error', message: 'File size exceeds the 5MB limit. Please compress your screenshot.' }
     }
-    if (!file.type.startsWith('image/')) {
-      return { status: 'error', message: 'Invalid file format. Only images are allowed.' }
+    const isImage = file.type.startsWith('image/')
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    if (!isImage && !isPdf) {
+      return { status: 'error', message: 'Invalid file format. Please upload an image or PDF.' }
     }
 
     const fileExt = file.name.split('.').pop()
@@ -73,7 +77,9 @@ export async function submitDonation(
     revalidatePath('/dashboard')
     return {
       status: 'success',
-      message: 'Your payment proof has been uploaded successfully. We’ll review it and update your donation status.'
+      message: 'Your payment proof has been uploaded successfully and submitted for verification. We’ll review it and update your donation status.',
+      fileName: file.name,
+      proofUrl: publicUrlData.publicUrl
     }
   } catch {
     return { status: 'error', message: 'Something went wrong while submitting your payment proof. Please try again.' }

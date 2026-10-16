@@ -1,8 +1,8 @@
 'use client';
-import { Fragment, useState, useEffect, useActionState } from 'react';
+import { Fragment, useState, useEffect, useActionState, useRef } from 'react';
 import Image from 'next/image';
 import { submitDonation } from '@/app/dashboard/actions';
-import { UploadCloud, CheckCircle2, Clock, XCircle, FileImage, MessageSquareQuote, AlertCircle, QrCode, Timer, Copy } from 'lucide-react';
+import { UploadCloud, CheckCircle2, Clock, XCircle, FileImage, MessageSquareQuote, AlertCircle, QrCode, Timer, Copy, Eye, RefreshCw, FileText } from 'lucide-react';
 
 const QR_TARGETS = [
   { name: 'Rohit', upi: '9881842449@ybl', image: '/RohitQR.jpeg' },
@@ -15,12 +15,28 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
   const [activeQR, setActiveQR] = useState(0);
   const [timeLeft, setTimeLeft] = useState(SESSION_DURATION);
   const [copied, setCopied] = useState(false);
-  const [submissionState, formAction, isSubmitting] = useActionState(submitDonation, { status: 'idle' as 'idle' | 'success' | 'error', message: '' });
+  const [submissionState, formAction, isSubmitting] = useActionState(submitDonation, { status: 'idle' as 'idle' | 'success' | 'error', message: '', fileName: '', proofUrl: '' });
   const [showResultPopup, setShowResultPopup] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (submissionState.status !== 'idle') setShowResultPopup(true);
   }, [submissionState]);
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setLocalPreviewUrl('');
+      return;
+    }
+    const url = URL.createObjectURL(selectedFile);
+    setLocalPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [selectedFile]);
+
+  const formatFileSize = (bytes: number) => bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(0)} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  const isPdf = (file: File) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
   // 5-Minute Session Timer Logic
   useEffect(() => {
@@ -64,9 +80,11 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
             <h2 id="proof-result-title" className="mb-3 text-2xl font-heading font-bold text-genx-dark">
               {submissionState.status === 'success' ? 'Payment Proof Uploaded!' : 'Upload Unsuccessful'}
             </h2>
-            <p className="mb-7 text-sm leading-relaxed text-gray-600">{submissionState.message}</p>
+            <p className="mb-3 text-sm leading-relaxed text-gray-600">{submissionState.message}</p>
+            {submissionState.status === 'success' && submissionState.fileName && <p className="mb-6 break-all text-xs font-semibold text-gray-500">{submissionState.fileName}</p>}
+            {submissionState.status === 'success' && submissionState.proofUrl && <a href={submissionState.proofUrl} target="_blank" rel="noreferrer" className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-genx-primary px-6 py-3.5 font-bold text-white transition-colors hover:bg-genx-dark"><Eye size={18} /> View Proof</a>}
             <button type="button" onClick={() => setShowResultPopup(false)} className="w-full rounded-xl bg-genx-dark px-6 py-3.5 font-bold text-white transition-colors hover:bg-genx-primary">
-              Got it
+              Close
             </button>
           </div>
         </div>
@@ -195,14 +213,35 @@ export default function DonationsTab({ donations }: { donations: any[] }) {
                 Transaction Screenshot
               </label>
               <div className="relative">
-                <input 
-                  name="screenshot" 
-                  type="file" 
-                  accept="image/*"
-                  required 
+                <input
+                  ref={fileInputRef}
+                  name="screenshot"
+                  type="file"
+                  accept="image/*,.pdf,application/pdf"
+                  required
+                  onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
                   className="w-full p-2.5 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-500 font-medium focus:outline-none focus:bg-white focus:ring-4 focus:ring-genx-primary/10 focus:border-genx-primary transition-all shadow-sm file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:uppercase file:tracking-wider file:font-bold file:bg-genx-primary text-white hover:file:bg-genx-dark file:transition-all file:cursor-pointer cursor-pointer"
                 />
               </div>
+              {selectedFile && (
+                <div className="mt-3 flex flex-col gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 sm:flex-row sm:items-center">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${isPdf(selectedFile) ? 'bg-red-100 text-red-600' : 'bg-genx-primary/10 text-genx-primary'}`}>
+                      {isPdf(selectedFile) ? <FileText size={24} /> : <FileImage size={24} />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="break-all text-sm font-bold text-genx-dark">{selectedFile.name}</p>
+                      <p className="mt-1 text-xs text-gray-500">{isPdf(selectedFile) ? 'PDF document' : selectedFile.type || 'Image file'} · {formatFileSize(selectedFile.size)}</p>
+                      <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-700"><CheckCircle2 size={13} /> File selected successfully</p>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <a href={localPreviewUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-bold text-genx-primary hover:text-genx-dark"><Eye size={16} /> View</a>
+                    <span className="h-5 w-px bg-gray-200" />
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="inline-flex items-center gap-1.5 text-sm font-bold text-genx-primary hover:text-genx-dark"><RefreshCw size={15} /> Replace</button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-auto pt-4">
