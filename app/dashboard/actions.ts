@@ -3,59 +3,81 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function submitDonation(formData: FormData) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+type DonationSubmissionState = {
+  status: 'idle' | 'success' | 'error'
+  message: string
+}
 
-  if (!user) throw new Error("Not authenticated")
+export async function submitDonation(
+  _previousState: DonationSubmissionState,
+  formData: FormData
+): Promise<DonationSubmissionState> {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-  const amount = formData.get('amount') as string
-  const file = formData.get('screenshot') as File
-  const message = formData.get('message') as string // Captured from the new UI
+    if (!user) {
+      return { status: 'error', message: 'Please log in before submitting payment proof.' }
+    }
 
-  if (!file || file.size === 0 || !amount) {
-    throw new Error("Amount and screenshot are required.")
+    const amount = formData.get('amount') as string
+    const file = formData.get('screenshot') as File
+    const message = formData.get('message') as string
+
+    if (!file || file.size === 0 || !amount) {
+      return { status: 'error', message: 'Amount and screenshot are required.' }
+    }
+
+    const parsedAmount = Number(amount)
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      return { status: 'error', message: 'Enter a valid donation amount greater than zero.' }
+    }
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024
+    if (file.size > MAX_FILE_SIZE) {
+      return { status: 'error', message: 'File size exceeds the 5MB limit. Please compress your screenshot.' }
+    }
+    if (!file.type.startsWith('image/')) {
+      return { status: 'error', message: 'Invalid file format. Only images are allowed.' }
+    }
+
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${user.id}/${Date.now()}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('payment-proofs')
+      .upload(filePath, file)
+
+    if (uploadError) {
+      return { status: 'error', message: 'Failed to upload payment proof: ' + uploadError.message }
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('payment-proofs')
+      .getPublicUrl(filePath)
+
+    const { error: dbError } = await supabase
+      .from('donations')
+      .insert({
+        user_id: user.id,
+        amount: parsedAmount,
+        screenshot_url: publicUrlData.publicUrl,
+        status: 'pending',
+        message: message ? message.trim() : null
+      })
+
+    if (dbError) {
+      return { status: 'error', message: 'The proof uploaded, but the donation record could not be saved. Please contact support before trying again.' }
+    }
+
+    revalidatePath('/dashboard')
+    return {
+      status: 'success',
+      message: 'Your payment proof has been uploaded successfully. We’ll review it and update your donation status.'
+    }
+  } catch {
+    return { status: 'error', message: 'Something went wrong while submitting your payment proof. Please try again.' }
   }
-
-  // SECURITY CHECKS: Limit to 5MB and ensure it is an image
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
-  if (file.size > MAX_FILE_SIZE) {
-    throw new Error("File size exceeds the 5MB limit. Please compress your screenshot.");
-  }
-  if (!file.type.startsWith('image/')) {
-    throw new Error("Invalid file format. Only images are allowed.");
-  }
-
-  // Generate a unique file path
-  const fileExt = file.name.split('.').pop()
-  const filePath = `${user.id}/${Date.now()}.${fileExt}`
-  
-  // Upload the file to the Supabase Storage Bucket
-  const { error: uploadError } = await supabase.storage
-    .from('payment-proofs')
-    .upload(filePath, file)
-
-  if (uploadError) throw new Error("Failed to upload screenshot: " + uploadError.message)
-
-  // Get the public URL for the uploaded image
-  const { data: publicUrlData } = supabase.storage
-    .from('payment-proofs')
-    .getPublicUrl(filePath)
-
-  // Insert the pending donation into the database
-  const { error: dbError } = await supabase
-    .from('donations')
-    .insert({
-      user_id: user.id,
-      amount: parseFloat(amount),
-      screenshot_url: publicUrlData.publicUrl,
-      status: 'pending',
-      message: message ? message.trim() : null // Injects the message safely
-    })
-
-  if (dbError) throw new Error("Failed to record donation: " + dbError.message)
-
-  revalidatePath('/dashboard')
 }
 
 export async function updateProfile(formData: FormData) {
@@ -80,7 +102,7 @@ export async function updateProfile(formData: FormData) {
 
     const fileExt = avatarFile.name.split('.').pop();
     const filePath = `${user.id}/avatar_${Date.now()}.${fileExt}`;
-    
+
     const { error: uploadError } = await supabase.storage
       .from('avatars')
       .upload(filePath, avatarFile, { upsert: true });
@@ -90,11 +112,10 @@ export async function updateProfile(formData: FormData) {
     const { data: publicUrlData } = supabase.storage
       .from('avatars')
       .getPublicUrl(filePath);
-      
+
     avatar_url = publicUrlData.publicUrl;
   }
 
-  // Construct the update payload dynamically
   const updatePayload: any = { name, bio, github_url, portfolio_url };
   if (avatar_url) updatePayload.avatar_url = avatar_url;
 
