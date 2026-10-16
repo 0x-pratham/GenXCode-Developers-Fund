@@ -26,7 +26,7 @@ export default async function HallOfFame() {
       {/* Luxury soft background glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-genx-accent/15 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
-      <div className="text-center mb-16">
+      <div className="text-center mb-10 sm:mb-12">
         <h1 className="text-5xl md:text-6xl font-heading font-bold text-genx-dark mb-5 tracking-tight">
           GenXCode Hall of Fame
         </h1>
