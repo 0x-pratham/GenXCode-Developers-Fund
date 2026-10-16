@@ -66,7 +66,7 @@ export default function AboutCTA() {
           
           <div className="flex flex-col sm:flex-row gap-5 justify-center w-full sm:w-auto">
             <Link 
-              href="/login" 
+              href="/dashboard" 
               className="relative group overflow-hidden inline-flex items-center justify-center px-10 py-4 rounded-full font-bold text-sm tracking-wide transition-all duration-300 active:scale-95 bg-white text-genx-dark shadow-[0_10px_30px_rgba(255,255,255,0.15)] hover:shadow-[0_15px_40px_rgba(255,255,255,0.3)] hover:-translate-y-1"
             >
               <motion.div 
