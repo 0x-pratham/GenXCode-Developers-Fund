@@ -7,7 +7,7 @@ export default function Loading() {
         <div className="absolute inset-0 border-4 border-genx-accent rounded-full border-t-transparent animate-spin"></div>
       </div>
       <p className="mt-6 text-genx-accent font-body tracking-widest uppercase text-sm animate-pulse">
-        Loading GenXCode...
+        Loading Dev Funds...
       </p>
     </div>
   );
