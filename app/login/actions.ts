@@ -10,6 +10,10 @@ export async function login(formData: FormData) {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   }
+  const requestedNext = formData.get('next')
+  const next = typeof requestedNext === 'string' && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'
 
   const { error } = await supabase.auth.signInWithPassword(data)
 
@@ -18,11 +22,15 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect(next)
 }
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
+  const requestedNext = formData.get('next')
+  const next = typeof requestedNext === 'string' && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
@@ -40,5 +48,5 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect(next)
 }
