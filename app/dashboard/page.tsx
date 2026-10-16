@@ -64,7 +64,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         <div className="flex bg-white/60 p-1.5 rounded-full shadow-inner border border-white backdrop-blur-md self-start">
           <Link 
             href="?tab=donations"
-            className={`px-6 py-2.5 text-sm font-bold rounded-full transition-all duration-300 ${currentTab === 'donations' ? 'bg-genx-dark text-white shadow-md' : 'text-gray-500 hover:text-genx-dark'}`}
+            className={`flex-1 px-3 py-3 text-center text-xs font-bold rounded-xl transition-all duration-300 sm:flex-none sm:rounded-full sm:px-6 sm:py-2.5 sm:text-sm ${currentTab === 'donations' ? 'bg-genx-dark text-white shadow-md' : 'text-gray-500 hover:text-genx-dark'}`}
           >
             Donations
           </Link>
