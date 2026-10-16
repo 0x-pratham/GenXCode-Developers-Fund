@@ -50,7 +50,7 @@ export default function AboutHero() {
 
         <motion.div variants={fadeUpVariant} className="w-full sm:w-auto">
           <Link 
-            href="/login" 
+            href="/dashboard" 
             className="group flex w-full sm:inline-flex items-center justify-center gap-3 px-8 py-4 bg-genx-dark text-white rounded-full font-bold text-sm tracking-wide transition-all duration-300 hover:bg-genx-primary hover:shadow-[0_12px_30px_rgba(94,35,150,0.25)] active:scale-95 border border-transparent hover:border-genx-accent/30"
           >
             Join the Movement
