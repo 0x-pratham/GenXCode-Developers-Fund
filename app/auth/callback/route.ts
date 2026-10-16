@@ -5,8 +5,11 @@ import { cookies } from 'next/headers';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  // Send them to the dashboard after login. You can change this to '/' if you prefer.
-  const next = searchParams.get('next') ?? '/dashboard'; 
+  // Accept only local relative destinations to prevent external redirects.
+  const requestedNext = searchParams.get('next');
+  const next = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/dashboard'; 
 
   if (code) {
     const cookieStore = await cookies();
